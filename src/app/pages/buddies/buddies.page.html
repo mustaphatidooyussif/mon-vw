@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Buddies</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar [(ngModel)]="searchstring" (input)="searchuser($event)" placeholder="Search"></ion-searchbar>
+  <ion-list no-lines>
+    <ion-list>
+      <ion-item-sliding *ngFor="let key of filteredusers">
+        <ion-item >
+          <ion-avatar item-left>
+            <img src="{{key.photoURL}}">
+          </ion-avatar>
+          <h2>&nbsp;&nbsp;{{key.displayName}}</h2>
+        </ion-item>
+        
+        <ion-item-options slide="left">
+          <ion-button fill="solid" expand="block" color="dark" (click)="sendreq(key)">
+            <ion-icon name="person-add"></ion-icon>Add
+          </ion-button>
+        </ion-item-options>
+        
+      </ion-item-sliding>
+    </ion-list>
+  </ion-list>
+</ion-content>

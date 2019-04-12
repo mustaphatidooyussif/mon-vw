@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf ="displayName">
+  <div id="profile-info" >
+      <div class="profile-image"><ion-img src="{{avatar}}" width="100" height="100"></ion-img></div>
+
+      <div class="spacer" style="height: 5px;"></div>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4">
+            Username: 
+          </ion-col>
+          <ion-col size="8">
+            {{ displayName }}
+          </ion-col>
+        </ion-row>
+        <div class="spacer" style="height: 10px;"></div>
+
+        <ion-row>
+          <ion-col size="4">
+            Email: 
+          </ion-col>
+          <ion-col size="8">
+            {{ email }}
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Edit details button -->
+      <div class="spacer" style="height: 10px;"></div>
+      <div>
+        <ion-button shape="round" color="primary">Edit Profile</ion-button>
+      </div>
+
+      <!-- Sign out button -->
+      <div class="spacer" style="height: 10px;"></div>
+      <div>
+          <ion-button shape="round" color="danger">Sign Out</ion-button>
+      </div>
+    </div>
+  
+</ion-content>
