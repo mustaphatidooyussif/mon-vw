@@ -82,6 +82,7 @@ export class BuddiesPage implements OnInit {
   }
 
   sendreq(recipient) {
+    console.log(firebase.auth().currentUser)
     this.newrequest.sender = firebase.auth().currentUser.uid;
     this.newrequest.recipient = recipient.uid;
     if (this.newrequest.sender === this.newrequest.recipient)

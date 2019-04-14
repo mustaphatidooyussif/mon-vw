@@ -28,6 +28,7 @@ export class ChatsPage implements OnInit {
       this.myrequests = [];
       this.myrequests = this.requestservice.userdetails;
     })
+
   }
 
   ionViewDidLeave() {
@@ -35,7 +36,6 @@ export class ChatsPage implements OnInit {
   }
 
   addbuddy(){
-    console.log("Hellpoo")
     this.router.navigate(["buddies"])
     }
  

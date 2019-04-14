@@ -2,6 +2,7 @@ import { UserService } from './user.service';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import * as firebase from 'firebase'
+import { Events } from '@ionic/angular'
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,11 @@ export class RequestService {
 
   userdetails;
   myfriends;
-
+  rquestedUser;
+  
   constructor(
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    public events: Events
     ) { 
     this.firefriends = afs.collection('friends');
   }
@@ -61,14 +64,26 @@ export class RequestService {
     return object;
   }
 
+  getUser(uid){
+    this.afs.doc(`users/${uid}`).get().subscribe(user =>{
+      this.rquestedUser = user.data()
+      console.log("rquestedUser 1", this.rquestedUser)
+    })
+
+    return 
+  }
+
   getmyrequests(){
-    var  allmyrequests = this.getAllrequests(firebase.auth().currentUser.uid) 
-    var  myrequests = [];   
-    var users = this.getAllUsers()
-    console.log("allmyrequests", allmyrequests)
-    for(var i in allmyrequests){
-      console.log(i)
-    }
-    console.log(myrequests)
+    this.userdetails = [];
+    //get request for this user
+    this.afs.doc(`requests/${firebase.auth().currentUser.uid}`).get().subscribe(docs =>{
+      if(docs.data()){
+        this.afs.doc(`users/${docs.data().sender}`).get().subscribe(user =>[
+          this.userdetails.push(user.data())
+        ])
+        this.events.publish('gotrequests');
+        console.log(this.userdetails)
+      }
+    })
   }
 }
