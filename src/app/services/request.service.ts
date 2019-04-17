@@ -8,8 +8,9 @@ import { Events } from '@ionic/angular'
   providedIn: 'root'
 })
 export class RequestService {
-  firereq: AngularFirestoreCollection
-  firefriends
+  firereq = firebase.database().ref('/requests');
+  firefriends = firebase.database().ref('/friends');
+
   usersCollection
   users
 
@@ -19,23 +20,22 @@ export class RequestService {
   
   constructor(
     private afs: AngularFirestore,
-    public events: Events
+    public events: Events,
+    public user: UserService
     ) { 
-    this.firefriends = afs.collection('friends');
   }
 
   sendrequest(req) {
     var promise = new Promise((resolve, reject) => {
-      this.afs.doc(`requests/${req.recipient}`).set({
+      this.firereq.child(req.recipient).push({
       sender: req.sender
       }).then(() => {
-        console.log("Resolved: ")
         resolve({ success: true });
         }).catch((err) => {
-          reject(err);
+          resolve(err);
     })
     })
-    return promise;  
+    return promise;
   }
 
   getAllrequests(uid){
@@ -73,17 +73,96 @@ export class RequestService {
     return 
   }
 
-  getmyrequests(){
-    this.userdetails = [];
-    //get request for this user
-    this.afs.doc(`requests/${firebase.auth().currentUser.uid}`).get().subscribe(docs =>{
-      if(docs.data()){
-        this.afs.doc(`users/${docs.data().sender}`).get().subscribe(user =>[
-          this.userdetails.push(user.data())
-        ])
-        this.events.publish('gotrequests');
-        console.log(this.userdetails)
+  // TODO: Optimize this code
+  getmyrequests() {
+    let allmyrequests;
+    var myrequests = [];
+    this.firereq.child(firebase.auth().currentUser.uid).on('value', (snapshot) => {
+      allmyrequests = snapshot.val();
+      myrequests = [];
+      for (var i in allmyrequests) {
+        myrequests.push(allmyrequests[i].sender);
       }
+      this.user.getallusers().then((res) => {
+        var allusers = res;
+        this.userdetails = [];
+        for (var j in myrequests)
+          for (var key in allusers) {
+            if (myrequests[j] === allusers[key].uid) {
+              this.userdetails.push(allusers[key]);
+            }
+          }
+        this.events.publish('gotrequests');
+      })
+
+  })
+  }
+
+  
+  acceptrequest(buddy) {
+    var promise = new Promise((resolve, reject) => {
+      this.myfriends = [];
+      this.firefriends.child(firebase.auth().currentUser.uid).push({
+        uid: buddy.uid
+      }).then(() => {
+        this.firefriends.child(buddy.uid).push({
+          uid: firebase.auth().currentUser.uid
+        }).then(() => {
+          this.deleterequest(buddy).then(() => {
+          resolve(true);
+        })
+
+        }).catch((err) => {
+          reject(err);
+         })
+        }).catch((err) => {
+          reject(err);
+      })
+    })
+    return promise;
+  }
+
+  deleterequest(buddy) {
+    var promise = new Promise((resolve, reject) => {
+     this.firereq.child(firebase.auth().currentUser.uid).orderByChild('sender').equalTo(buddy.uid).once('value', (snapshot) => {
+          let somekey;
+          for (var key in snapshot.val())
+            somekey = key;
+          this.firereq.child(firebase.auth().currentUser.uid).child(somekey).remove().then(() => {
+            resolve(true);
+          })
+         })
+          .then(() => {
+
+        }).catch((err) => {
+          reject(err);
+        })
+    })
+    return promise;
+  }
+
+  getmyfriends() {
+    let friendsuid = [];
+    this.firefriends.child(firebase.auth().currentUser.uid).on('value', (snapshot) => {
+      let allfriends = snapshot.val();
+      this.myfriends = [];
+      for (var i in allfriends)
+        friendsuid.push(allfriends[i].uid);
+
+      this.user.getallusers().then((users) => {
+        this.myfriends = [];
+        for (var j in friendsuid)
+          for (var key in users) {
+            if (friendsuid[j] === users[key].uid) {
+              this.myfriends.push(users[key]);
+            }
+          }
+        this.events.publish('friends');
+      }).catch((err) => {
+        alert(err);
+      })
+
     })
   }
+
 }

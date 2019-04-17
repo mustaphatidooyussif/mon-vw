@@ -5,7 +5,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { Router } from '@angular/router'
 import { RequestService } from '../../services/request.service'
 import { AlertController  } from '@ionic/angular'
-
+import { UserService } from '../../services/user.service'
 
 @Component({
   selector: 'app-buddies',
@@ -16,9 +16,6 @@ export class BuddiesPage implements OnInit {
   filteredusers = [];
   temparr = [];
   
-  usersCollection: AngularFirestoreCollection
-  users
-
   newrequest  = {
     sender: "",
     recipient: ""
@@ -28,18 +25,13 @@ export class BuddiesPage implements OnInit {
     public router: Router,
     private afs: AngularFirestore,
     public alertController: AlertController,
-    public requestservice: RequestService
+    public requestservice: RequestService,
+    public user: UserService
     ) { 
-
-    this.usersCollection = afs.collection('users');
-    this.users = this.usersCollection.snapshotChanges().subscribe(querySnapshot =>{
-      querySnapshot.forEach(doc => {
-        var doc_object = this.documentToDomainObject(doc);
-        this.filteredusers.push(doc_object);
-        this.temparr.push(doc_object);
-      })
-      // console.log()
-    });
+      this.user.getallusers().then((res: any) => {
+        this.filteredusers = res;
+        this.temparr = res;
+     })
   
   }
 
@@ -78,11 +70,10 @@ export class BuddiesPage implements OnInit {
   }
 
   ngOnDestroy() {
-		this.users.unsubscribe()
+		
   }
 
   sendreq(recipient) {
-    console.log(firebase.auth().currentUser)
     this.newrequest.sender = firebase.auth().currentUser.uid;
     this.newrequest.recipient = recipient.uid;
     if (this.newrequest.sender === this.newrequest.recipient)

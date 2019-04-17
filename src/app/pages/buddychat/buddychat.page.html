@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="tabs"></ion-back-button>
+        </ion-buttons>
+    <ion-title>{{buddy.displayName}}</ion-title>
+    <ion-buttons slot="end">
+        <button ion-button (click)="sendPicMsg()">
+        <ion-icon name="camera"></ion-icon>
+        </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+    <div class = "chatwindow" style="display:flex">
+      <ion-list lines = "none">
+        <ion-item *ngFor = "let item of allmessages; let i = index" text-wrap>
+          <ion-avatar  slot="start" *ngIf="item.sentby === buddy.uid">
+            <img src="{{buddy.photoURL}}">
+          </ion-avatar>
+          <div class="bubble buddy" *ngIf="item.sentby === buddy.uid" style="flex:left">
+            <h3>{{item.message}}</h3>
+          </div>
+
+          <div class="bubble me" *ngIf="item.sentby != buddy.uid" style="flex:right">
+            <h3>{{item.message}}</h3>
+            <hr>
+            <h3>Translated</h3>
+          </div>
+          <ion-avatar  slot="end" *ngIf="item.sentby != buddy.uid">
+              <img src="{{photoURL}}">
+            </ion-avatar>
+        </ion-item>
+      </ion-list>
+    </div>
+    </ion-content>
+    <ion-footer ion-fixed>    
+      <ion-toolbar class="no-border" color="white">        
+        <ion-input [(ngModel)]="newmessage" placeholder="Write your message ..."></ion-input>  
+        <ion-buttons slot="end">
+          <ion-button  (click)="addmessage()">
+            <ion-icon name="send" color="primary" ></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>    
+    </ion-footer>

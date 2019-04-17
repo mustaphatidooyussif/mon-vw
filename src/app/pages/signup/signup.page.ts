@@ -58,7 +58,7 @@ export class SignupPage implements OnInit {
 			duration: 1500,
 			spinner: "bubbles"
     });
-    return loading;
+    return await loading.present();
 	}
 
 		//Custom toast
@@ -75,48 +75,31 @@ export class SignupPage implements OnInit {
 		}
 		
 	
-	//Register user function
-  async register() {
-		const { username, email, password, cpassword } = this
-		if(password !== cpassword) {
-			this.presentToast("Passwords don't match", "danger")
-		}
-
-		try { 
-			if( username == '' || email == '' || password == ''){
+		register() {
+			var   newuser = {
+				email: this.email,
+				password: this.password,
+				displayName: this.capitalize(this.username)
+			}
+			const { username, email, password, cpassword } = this
+			if (username == '' || email == '' || password == '') {
 				console.log("All fields are required...")
 				this.presentToast("All fields are required", "danger")
 			}
-			else{
-					//Loader
-				let loading = await this.presentLoading("Please wait...");
-				await loading.present()
-
-				const res = await this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-
-				//save current user
-				this.user.setUser({
-					email,
-					uid: res.user.uid
-				})
-
-				//Update user profile in firebase
-				this.afstore.doc(`users/${this.user.getUID()}`).set({
-					displayName: this.capitalize(username),
-					email: email,
-					photoURL: 'https://firebasestorage.googleapis.com/v0/b/myapp-4eadd.appspot.com/o/chatterplace.png?alt=media&token=e51fa887-bfc6-48ff-87c6-e2c61976534e'
-				})
-
-				//stop loader
-				await loading.dismiss()
-				this.router.navigate(['/tabs'])
+			else if (password.length < 7) {
+				this.presentToast('Password is not strong. Try giving more than six characters', "danger")
 			}
-		} catch(error) {
-			console.dir(error)
-			if(error.code === "auth/email-already-in-use"){
-				console.log("Email already in use")
+			else {
+					//Loading
+					this.presentLoading("Please wait ...")
+					this.user.adduser(newuser).then((res: any) => {
+					if (res.success){
+						this.router.navigate(['/tabs'])
+					}
+					else{
+						alert('Error' + res);
+					}
+				})
 			}
-		}
-		
-	}
+		}  
 }

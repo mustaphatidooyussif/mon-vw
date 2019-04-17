@@ -9,8 +9,8 @@ const routes: Routes = [
   { path: 'tabs', loadChildren: './pages/tabs/tabs.module#TabsPageModule' , canActivate: [AuthService]},
   { path: 'passwordreset', loadChildren: './pages/passwordreset/passwordreset.module#PasswordresetPageModule' },
   { path: 'profilepic', loadChildren: './pages/profilepic/profilepic.module#ProfilepicPageModule' },
-  { path: 'buddies', loadChildren: './pages/buddies/buddies.module#BuddiesPageModule' },
-  { path: 'service', loadChildren: './service/service.module#ServicePageModule' },
+  { path: 'buddies', loadChildren: './pages/buddies/buddies.module#BuddiesPageModule' , canActivate: [AuthService]},
+  { path: 'buddychat', loadChildren: './pages/buddychat/buddychat.module#BuddychatPageModule', canActivate: [AuthService] },
 ];
 
 @NgModule({

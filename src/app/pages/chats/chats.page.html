@@ -17,6 +17,62 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <!-- <ion-list no-lines>
+    <ion-list-header>
+      Requests
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let item of myrequests">
+      <ion-item>
+      <ion-avatar item-left>
+        <img src="{{item.photoURL}}">
+      </ion-avatar>
+      <h4>{{item.displayName}}</h4>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="secondary" (click)="accept(item)">
+          <ion-icon name="checkmark"></ion-icon>
+          ADD
+        </button>
+        <button ion-button color="danger" (click)="ignore(item)">
+          <ion-icon name="trash"></ion-icon>
+          NOPE
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list> -->
 
-</ion-content>
+  <ion-list no-lines >
+      <ion-list-header>
+          Requests
+      </ion-list-header>
+      <ion-item-sliding *ngFor="let key of myrequests">
+        <ion-item >
+          <ion-avatar item-left>
+            <img src="{{key.photoURL}}">
+          </ion-avatar>
+          <h4>&nbsp;&nbsp;{{key.displayName}}</h4>
+        </ion-item>
+        
+        <ion-item-options slide="left">
+          <ion-button fill="solid" expand="block" color="secondary" (click)="accept(key)">
+            <ion-icon name="checkmark"></ion-icon>Add
+          </ion-button>
+
+          <ion-button fill="solid" expand="block" color="danger" (click)="ignore(key)">
+            <ion-icon name="trash"></ion-icon>IGNORE
+          </ion-button>
+        </ion-item-options>
+      </ion-item-sliding>
+      
+      <ion-list-header>
+          Friends
+      </ion-list-header>
+        <ion-item *ngFor="let item of myfriends" (click)="buddychat(item)">
+          <ion-avatar item-left>
+            <img src={{item.photoURL}}>
+          </ion-avatar>
+          <h3>&nbsp;&nbsp;{{item.displayName}}</h3>
+        </ion-item>
+    </ion-list>
+  </ion-content>
