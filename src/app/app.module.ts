@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpModule } from '@angular/http'
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -16,7 +17,11 @@ import { AngularFirestore } from '@angular/fire/firestore'
 
 import { UserService } from './services/user.service'
 import { AuthService } from './services/auth.service'
+import { TanslationService } from './services/tanslation.service'
 import { ImagehandlerService } from './services/imagehandler.service'
+import { IonicSelectableModule } from 'ionic-selectable';
+import { IonicStorageModule } from '@ionic/storage';
+
 
 //File upload
 // import { File } from '@ionic-native/file';
@@ -30,6 +35,9 @@ import { ImagehandlerService } from './services/imagehandler.service'
     IonicModule.forRoot(), 
     AppRoutingModule,
     AngularFireAuthModule,
+    IonicSelectableModule,
+    HttpModule,
+    // IonicStorageModule,
     AngularFireModule.initializeApp(config)],
   providers: [
     StatusBar,
@@ -39,9 +47,7 @@ import { ImagehandlerService } from './services/imagehandler.service'
     UserService,
     AngularFirestore,
     ImagehandlerService,
-    // File,
-    // FileChooser,
-    // FilePath,
+    TanslationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

@@ -39,7 +39,7 @@ export class LoginPage implements OnInit {
 			duration: 1500,
 			spinner: "bubbles"
     });
-    return await loading.present();
+    await loading.present();
 	}
 
 	//Custom toast
@@ -52,7 +52,7 @@ export class LoginPage implements OnInit {
 			color: color,
 			duration: 1000
     });
-    toast.present();
+    await toast.present();
 	}
 
 	signin() {
@@ -66,7 +66,7 @@ export class LoginPage implements OnInit {
 			this.presentToast("All fields are required", "danger")
 	}else{
 			//loader
-			// this.presentLoading("Please wait...")
+			this.presentLoading("Please wait...")
 
 			this.authService.login(credentials).then((res: any) => {
       if (!res.code){

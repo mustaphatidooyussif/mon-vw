@@ -126,4 +126,59 @@ export class UserService {
       })
       return promise;
     }
+
+    getuserdetails() {
+      var promise = new Promise((resolve, reject) => {
+      this.firedata.child(firebase.auth().currentUser.uid).once('value', (snapshot) => {
+        resolve(snapshot.val());
+      }).catch((err) => {
+        reject(err);
+        })
+      })
+      return promise;
+    }
+
+    updatedisplayname(newname) {
+      var promise = new Promise((resolve, reject) => {
+        this.afAuth.auth.currentUser.updateProfile({
+        displayName: newname,
+        photoURL: this.afAuth.auth.currentUser.photoURL
+      }).then(() => {
+        this.firedata.child(firebase.auth().currentUser.uid).update({
+          displayName: newname,
+          photoURL: this.afAuth.auth.currentUser.photoURL,
+          uid: this.afAuth.auth.currentUser.uid
+        }).then(() => {
+          resolve({ success: true });
+        }).catch((err) => {
+          reject(err);
+        })
+        }).catch((err) => {
+          reject(err);
+      })
+      })
+      return promise;
+    }
+
+    updatedPhotoURL(new_url) {
+      var promise = new Promise((resolve, reject) => {
+        this.afAuth.auth.currentUser.updateProfile({
+        displayName: this.afAuth.auth.currentUser.displayName,
+        photoURL: new_url
+      }).then(() => {
+        this.firedata.child(firebase.auth().currentUser.uid).update({
+          displayName: this.afAuth.auth.currentUser.displayName,
+          photoURL:new_url,
+          uid: this.afAuth.auth.currentUser.uid
+        }).then(() => {
+          resolve({ success: true });
+        }).catch((err) => {
+          reject(err);
+        })
+        }).catch((err) => {
+          reject(err);
+      })
+      })
+      return promise;
+    }
 }

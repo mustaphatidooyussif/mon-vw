@@ -2,6 +2,12 @@
     width: 320px;
 }
 
+img {
+    border-radius: 50%;
+    width:40px;
+  }
+
+ 
 .bubble{
     background-color: #F2F2F2;
     border-radius: 5px;
@@ -11,7 +17,7 @@
     position: relative;
     vertical-align: top;
 }
-
+ 
 .bubble::before {
     background-color: #F2F2F2;
     content: "\00a0";
@@ -26,35 +32,27 @@
         -webkit-transform: rotate( 29deg ) skew( -35deg );
     width:  20px;
 }
-
-.buddy {
-    // float: left;   
+ 
+.me {
+    float: left;   
     margin: 5px 45px 5px 20px;         
 }
-
-.buddy::before {
+ 
+.me::before {
     box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
     left: -9px;           
 }
-
-.me {
-    // float: right;    
+ 
+.you {
+    float: right;    
     margin: 5px 20px 5px 45px;         
 }
-
-.me::before {
+ 
+.you::before {
     box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
     right: -9px;    
 }
-
+ 
 .chatwindow {
     padding-bottom: 70px;
-}
-
-.right-menu{
-    display: flex;
-}
-
-.left-menu{
-    display: flex;
 }

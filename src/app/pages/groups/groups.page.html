@@ -1,17 +1,33 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Groups</ion-title>
+    <ion-title>Settings</ion-title>
   </ion-toolbar>
-
+<!-- 
     <ion-buttons slot="end">
     <ion-button>
       <ion-icon slot="icon-only" name="person-add"></ion-icon>
     </ion-button>
 
-  </ion-buttons>
+  </ion-buttons> -->
 
 </ion-header>
 
 <ion-content>
+
+    <ion-item>
+        <ion-label>Select target Language</ion-label>
+        <ionic-selectable
+          ionic-selectable-modal-can-clear
+          [(ngModel)]="language"
+          [items]="languages"
+          itemValueField="languageCode"
+          itemTextField="languageName"
+          [canSearch]="true"
+          (onChange)="languageChange($event)">
+          <ng-template ionicSelectableCloseButtonTemplate>
+              <ion-icon name="close-circle" style="font-size: 24px;"></ion-icon>
+          </ng-template>
+        </ionic-selectable>
+      </ion-item>
 
 </ion-content>
