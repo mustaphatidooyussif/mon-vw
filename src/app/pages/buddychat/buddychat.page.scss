@@ -7,7 +7,23 @@ img {
     width:40px;
   }
 
- 
+  .message{
+    background-color: rgb(17, 78, 190);
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-bottom: 0;  
+}
+
+.translation{
+    background-color: rgb(40, 133, 156);
+    color: white;
+    font-size: 19;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-bottom: 30px;
+    }
+
 .bubble{
     background-color: #F2F2F2;
     border-radius: 5px;

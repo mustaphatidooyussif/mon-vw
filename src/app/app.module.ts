@@ -23,7 +23,7 @@ import { IonicSelectableModule } from 'ionic-selectable';
 import { IonicStorageModule } from '@ionic/storage';
 
 
-//File upload
+// File upload
 // import { File } from '@ionic-native/file';
 // import { FileChooser } from '@ionic-native/file-chooser';
 // import { FilePath } from '@ionic-native/file-path';
