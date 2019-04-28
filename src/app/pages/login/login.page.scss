@@ -1,3 +1,21 @@
 .btn-bg{
     background-color:#C4C4C4;
 }
+
+
+// .main-content{
+//     margin: auto 0;
+//     width: 100px;
+//     background-color:red;
+// }
+
+:host {
+    ion-content {
+        --background: linear-gradient(135deg, var(--ion-color-dark), var(--ion-color-primary));
+    }
+}
+
+.paz {
+    position: relative;
+    z-index: 10;
+}

@@ -1,6 +1,7 @@
 import { element } from 'protractor';
 import { auth } from 'firebase/app';
-import { AlertController } from '@ionic/angular'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertController, MenuController, ToastController, LoadingController} from '@ionic/angular'
 import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 
@@ -13,12 +14,25 @@ import { AuthService } from '../../services/auth.service'
 })
 export class PasswordresetPage implements OnInit {
   email: string = ""
+
+  public passwordResetForm: FormGroup;
   constructor(
     public authService: AuthService,
+    public menuCtrl: MenuController,
     public router: Router, 
+    private formBuilder: FormBuilder,
     public alertController: AlertController) { }
 
   ngOnInit() {
+    this.passwordResetForm = this.formBuilder.group({
+      'email': [null, Validators.compose([
+        Validators.required
+      ])]
+    });
+  }
+
+  ionViewWillEnter() {
+    this.menuCtrl.enable(false);
   }
 
   	//Custom alert function
@@ -34,7 +48,7 @@ export class PasswordresetPage implements OnInit {
  
   //Send email recovery message
   changeMyPassword() {
-    const { email } = this
+    const { email } = this.passwordResetForm.value.email;
     this.authService.resetPassword(email).then((res: any) => {
       if (res.success) {
         this.presentAlert("Email Sent", "Please follow the instructions in the email sent to you to reset your password")

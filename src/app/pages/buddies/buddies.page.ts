@@ -6,6 +6,7 @@ import { Router } from '@angular/router'
 import { RequestService } from '../../services/request.service'
 import { AlertController  } from '@ionic/angular'
 import { UserService } from '../../services/user.service'
+import { Events } from '@ionic/angular'
 
 @Component({
   selector: 'app-buddies',
@@ -15,6 +16,7 @@ import { UserService } from '../../services/user.service'
 export class BuddiesPage implements OnInit {
   filteredusers = [];
   temparr = [];
+  myfriends;
   
   newrequest  = {
     sender: "",
@@ -26,23 +28,18 @@ export class BuddiesPage implements OnInit {
     private afs: AngularFirestore,
     public alertController: AlertController,
     public requestservice: RequestService,
+    public events: Events,
     public user: UserService
     ) { 
       this.user.getallusers().then((res: any) => {
         this.filteredusers = res;
         this.temparr = res;
      })
-  
   }
 
   ngOnInit() {
   }
 
-  documentToDomainObject = snap => {
-    const object = snap.payload.doc.data();
-    object.uid = snap.payload.doc.id;
-    return object;
-  }
 	//Custom alert function
   async presentAlert(title: string, content: string) {
 		const alert = await this.alertController.create({

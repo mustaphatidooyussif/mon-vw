@@ -1,11 +1,11 @@
-import { AuthService } from './../../services/auth.service';
-import { Component, OnInit} from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth'
-import { auth } from 'firebase/app'
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NavController, MenuController, ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { LoadingController , ToastController  } from '@ionic/angular';
-import * as firebase from 'firebase'
 import { UserService } from '../../services/user.service'
+import { AuthService } from './../../services/auth.service';
+import { AngularFireAuth } from '@angular/fire/auth';
+import * as firebase from 'firebase'
 
 @Component({
   selector: 'app-login',
@@ -13,26 +13,39 @@ import { UserService } from '../../services/user.service'
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  email: string = ""
-  password: string= ""
+  public onLoginForm: FormGroup;
 
   constructor(
-    public afAuth: AngularFireAuth, 
+    public navCtrl: NavController,
+    public menuCtrl: MenuController,
+    public toastCtrl: ToastController,
+    public alertCtrl: AlertController,
+		private formBuilder: FormBuilder,
 		public router: Router,
+		public afAuth: AngularFireAuth, 
 		public loadingCtrl: LoadingController,
 		public user: UserService,
 		public toastController: ToastController,
-		public authService: AuthService
-    ) { }
+		public authService: AuthService,
+  ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
+    this.menuCtrl.enable(false);
   }
 
-	toRegister(){
-		this.router.navigate(['signup'])
-	}
+  ngOnInit() {
 
-	//Custom loader
+    this.onLoginForm = this.formBuilder.group({
+      'email': [null, Validators.compose([
+        Validators.required
+      ])],
+      'password': [null, Validators.compose([
+        Validators.required
+      ])]
+    });
+	}
+	
+		//Custom loader
 	async presentLoading(message: string) {
     const loading = await this.loadingCtrl.create({
       message: message,
@@ -55,76 +68,72 @@ export class LoginPage implements OnInit {
     await toast.present();
 	}
 
-	signin() {
-		const { email, password } = this
-		var credentials ={
-			email:email,
-			password: password
+		//Custom alert function
+		async presentAlert(title: string, content: string) {
+			const alert = await this.alertCtrl.create({
+				header: title,
+				message: content,
+				buttons: [
+					{
+					text:'OK',
+					role: "cancel",
+					cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel: blah');
+          }
+				}
+				]
+			})
+	
+			await alert.present()
 		}
-		if (email == '' || password == ''){
-			console.log("All fields are required...")
-			this.presentToast("All fields are required", "danger")
-	}else{
-			//loader
-			this.presentLoading("Please wait...")
+		
 
-			this.authService.login(credentials).then((res: any) => {
+  forgotPass() {
+		this.router.navigate(["passwordreset"])
+  }
+
+  // // //To sign up page
+  goToRegister() {
+    this.router.navigate(['signup'])
+  }
+
+	// Login and go to home page
+  async goToHome() {
+		const loader = await this.loadingCtrl.create({
+			message: "Please wait ...",
+      duration: 2000
+    });
+
+		console.log(this.onLoginForm.value);
+		loader.present();
+		this.authService.login(this.onLoginForm.value).then((res: any) => {
+			loader.dismiss();
       if (!res.code){
-
 				this.user.setUser({
-					email: email,
+					email: this.onLoginForm.value.email,
 					uid: firebase.auth().currentUser.uid
 				})
 
 				this.router.navigate(['/tabs'])
 			}
       else{
-        alert(res);
+				alert(res);
+				console.dir(res);
 			}
-    })
-	}
+	  }).catch((err) =>{
+			loader.dismiss();
+			console.dir(err);
+			if(err.code === "auth/invalid-email"){
+				this.presentAlert("Failed!", "Please check your email")
+			}
+
+			if(err.code ===  "auth/user-not-found" || err.code === "auth/wrong-password"){
+				this.presentAlert("Invalid credentials!", "Invalid email or password")
+			}
+		})
+	
   }
-	
-	// //login function
-  // async login() {
-	// 	const { email, password } = this
 
-	// 	try {
-
-	// 		if (email == '' || password == ''){
-	// 				console.log("All fields are required...")
-	// 				this.presentToast("All fields are required", "danger")
-	// 		}
-	// 		else {
-	// 				//loader
-	// 				let loading = await this.presentLoading("Please wait...")
-	// 				await loading.present()
-
-	// 				const res = await this.afAuth.auth.signInWithEmailAndPassword(email, password)
-	// 				console.log(res)
-		
-	// 				if(res.user) {
-	// 					this.user.setUser({
-	// 						email,
-	// 						uid: res.user.uid
-	// 					})
-	
-	// 					//stop loader
-	// 					await loading.dismiss()
-	// 					this.router.navigate(['/tabs'])
-	// 			}
-	// 		}
-		
-	// 	} catch(err) {
-	// 		console.dir(err)
-	// 		if(err.code === "auth/user-not-found") {
-	// 			console.log("User not found")
-	// 		}
-	// 	}
-	// }
-
-	//Password reset
-	passwordReset(){
-		this.router.navigate(["passwordreset"])
-	}
 }
+
