@@ -1,10 +1,10 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { UserService } from '../../services/user.service'
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore'
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import {AlertController} from '@ionic/angular';
 import { Http } from '@angular/http';
+import { ImagehandlerService } from './../../services/imagehandler.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +22,8 @@ export class ProfilePage implements OnInit {
      private router: Router,
      public zone: NgZone,
      public alertCtrl:AlertController,
-     public http: Http
+     public http: Http,
+     public imghandler: ImagehandlerService
      ) { }
 
   ngOnInit() {
@@ -58,7 +59,7 @@ export class ProfilePage implements OnInit {
     await alert.present();
   }
 
-  async presentAlertPrompt() {
+  async editUserName() {
     const alert = await this.alertCtrl.create({
       header: 'Edit Nickname!',
       inputs: [{
@@ -81,14 +82,14 @@ export class ProfilePage implements OnInit {
                 this.user.updatedisplayname(data.nickname).then((res: any) => {
                 if (res.success) {
                   //update1
-                  this.presentAlert("Updated", "Your profile pic has been changed successfully!!")
+                  this.presentAlert("Updated", "Your  name has been changed successfully!!")
                   this.zone.run(() => {
                     this.displayName = data.nickname;
                   })
                 }
                 else {
                   ///update 2
-                  this.presentAlert("Failed", "Your profile pic was not changed!!")
+                  this.presentAlert("Failed", "Your profile name was not changed!!")
                 }
                                
               })
@@ -102,7 +103,22 @@ export class ProfilePage implements OnInit {
   }
 
   editname() {
-    this.presentAlertPrompt();
+    this.editUserName();
+  }
+
+  editimage() {
+    this.imghandler.uploadimage().then((url: any) => {
+      this.user.updateimage(url).then((res: any) => {
+        if (res.success) {
+          this.presentAlert("Updated", "Your profile picture has been changed successfully!!");
+          this.zone.run(() => {
+          this.avatar = url;
+        })  
+        }  
+      }).catch((err) => {
+        this.presentAlert("Failed", "Your picture was not changed!!");
+      })
+      })
   }
 
   fileChanged(event) {

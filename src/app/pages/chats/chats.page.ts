@@ -4,6 +4,7 @@ import { RequestService } from '../../services/request.service' //
 import { Events } from '@ionic/angular'
 import { AlertController  } from '@ionic/angular'
 import { ChatService } from '../../services/chat.service'
+import { Storage } from '@ionic/storage'
 
 @Component({
   selector: 'app-chats',
@@ -20,7 +21,8 @@ export class ChatsPage implements OnInit {
     public requestservice: RequestService,
     public events: Events,
     public alertController: AlertController,
-    public chatservice: ChatService
+    public chatservice: ChatService,
+    public storage: Storage
     ) { }
 
   ngOnInit() {
@@ -75,7 +77,8 @@ export class ChatsPage implements OnInit {
     }
 
   buddychat(buddy) {
-      this.chatservice.initializebuddy(buddy);
+      this.chatservice.initializebuddy(buddy); //intialize buddy
+      this.storage.set("current_buddy", buddy); //also store current buddy
       this.router.navigate(["buddychat"])
     }
 

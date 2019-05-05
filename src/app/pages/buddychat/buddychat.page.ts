@@ -3,10 +3,9 @@ import { ChatService } from '../../services/chat.service'
 import * as firebase from 'firebase'
 import { Events, IonContent  } from '@ionic/angular';
 import { UserService } from '../../services/user.service'
-import { TanslationService } from './../../services/tanslation.service';
 import {Http}  from     '@angular/http';
-// import { Storage } from '@ionic/storage'
-
+import { PreferenceService } from './../../services/preference.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-buddychat',
@@ -26,17 +25,26 @@ export class BuddychatPage implements OnInit {
   targetLanguageCode;
   targetLanguageName = "English";
   translatedText;
+  enableTranslation;
 
   constructor(
     public chatservice: ChatService,
     public events: Events,
-    private transService: TanslationService,
     public user: UserService,
     public zone: NgZone,
-    private http: Http
+    private http: Http,
+    private  preferencesService: PreferenceService,
+    public storage: Storage
 
   ) { 
-    this.buddy = this.chatservice.buddy;
+    // if buddy not set, retrieve from database
+    if(this.chatservice.buddy){
+      this.buddy = this.chatservice.buddy;
+    }else{
+      this.preferencesService.getCurrentBuddy().then(buddy =>{
+        this.buddy  = buddy;
+      })
+    }
     this.photoURL = firebase.auth().currentUser.photoURL;
     this.scrollto();
     this.events.subscribe('newmessage', () => {
@@ -44,7 +52,15 @@ export class BuddychatPage implements OnInit {
       this.zone.run(() => {
         this.allmessages = this.chatservice.buddymessages;
       })
-    })
+    });
+
+    this.targetLanguageCode = this.preferencesService.getTranslationLanguage();
+    this.preferencesService.getEnableTranslationStatus().then(status =>{
+      console.log(status);
+      this.zone.run(()=>{
+        this.enableTranslation  = status;
+      })
+    });
   }
 
   ionViewDidLoad(){
@@ -67,7 +83,7 @@ export class BuddychatPage implements OnInit {
   ngOnInit() {
   }
 
-  translateAndSend(message, sourceLangeCode,targetLangCode){
+  translateAndSend(message, sourceLangeCode, targetLangCode){
     this.http.get("https://translate.googleapis.com/translate_a/single?client=gtx&sl=" 
     + sourceLangeCode + "&tl=" + targetLangCode + "&dt=t&q=" + encodeURI(message)).subscribe(data =>{
       var translatedText = data.json()[0][0][0]
@@ -81,14 +97,11 @@ export class BuddychatPage implements OnInit {
 
   addmessage() {
     if(this.newmessage != ''){
-      console.log("code: ", this.targetLanguageCode);
-      if(typeof(this.targetLanguageCode) != "undefined"){
-        console.log("code1: ", this.targetLanguageCode);
-        this.translateAndSend(this.newmessage, "en", this.targetLanguageCode)
-      }else{
-        console.log("code2: ", this.targetLanguageCode);
-        this.translateAndSend(this.newmessage, "en", "fr")
-      }
+      console.log(this.targetLanguageCode);
+      this.preferencesService.getTranslationLanguage().then(code =>{
+        console.log(code)
+        this.translateAndSend(this.newmessage, "en", code);
+      })
     }
   }
 

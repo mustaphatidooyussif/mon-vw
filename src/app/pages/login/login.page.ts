@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NavController, MenuController, ToastController, AlertController, LoadingController } from '@ionic/angular';
+import { MenuController, ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service'
 import { AuthService } from './../../services/auth.service';
-import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase'
 
 @Component({
@@ -16,13 +15,11 @@ export class LoginPage implements OnInit {
   public onLoginForm: FormGroup;
 
   constructor(
-    public navCtrl: NavController,
     public menuCtrl: MenuController,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController,
 		private formBuilder: FormBuilder,
 		public router: Router,
-		public afAuth: AngularFireAuth, 
 		public loadingCtrl: LoadingController,
 		public user: UserService,
 		public toastController: ToastController,
@@ -34,7 +31,6 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-
     this.onLoginForm = this.formBuilder.group({
       'email': [null, Validators.compose([
         Validators.required
@@ -125,11 +121,13 @@ export class LoginPage implements OnInit {
 			loader.dismiss();
 			console.dir(err);
 			if(err.code === "auth/invalid-email"){
-				this.presentAlert("Failed!", "Please check your email")
-			}
+				this.presentAlert("Failed!", "Please check your email");
 
-			if(err.code ===  "auth/user-not-found" || err.code === "auth/wrong-password"){
-				this.presentAlert("Invalid credentials!", "Invalid email or password")
+			}else if(err.code ===  "auth/user-not-found" || err.code === "auth/wrong-password"){
+				this.presentAlert("Invalid credentials!", "Invalid email or password");
+				
+			}else if(err.code === "auth/network-request-failed"){
+				this.presentAlert("A network error!", "Please check your internet connection")
 			}
 		})
 	

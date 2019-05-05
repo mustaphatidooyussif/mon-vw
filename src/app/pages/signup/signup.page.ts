@@ -216,14 +216,18 @@ export class SignupPage implements OnInit {
 				loader.dismiss();
 				console.dir(err);
 				if(err.code === "auth/invalid-email"){
-					this.presentAlert("Failed!", "Please check your email")
+					this.presentAlert("Failed!", "Please check your email");
+					
 				}		
 				else if(err.code === "auth/email-already-in-use"){
-					this.presentAlert("Failed!", "This email is already registered!")
+					this.presentAlert("Failed!", "This email is already registered!");
+
+				}else if(err.code === "auth/network-request-failed"){
+					this.presentAlert("A network error!", "Please check your internet connection");
 				}
 			})
 			}else{
-				this.presentAlert("weak password!", "Password should be at least 6 characters")
+				this.presentAlert("weak password!", "Password should be at least 6 characters");
 			}
 		}
 

@@ -1,11 +1,7 @@
 import { Component, OnInit} from '@angular/core';
-// import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import * as firebase from 'firebase'
 import { IonicSelectableComponent } from 'ionic-selectable';
-import { TanslationService } from './../../services/tanslation.service';
 import { Events } from '@ionic/angular'
-// import { Storage } from '@ionic/storage';
+import { PreferenceService } from './../../services/preference.service';
 
 @Component({
   selector: 'app-groups',
@@ -13,181 +9,65 @@ import { Events } from '@ionic/angular'
   styleUrls: ['./groups.page.scss'],
 })
 export class GroupsPage implements OnInit {
+  /**
+   * Thid page is converted to settings page.
+   */
 
+  lang: any;
+  enableTranslation: any;
   language;
   languages = [
     {
-      languageCode: 'ar',
-      languageName: 'Arabic'
-    },
-    {
-      languageCode: 'eu',
-      languageName: 'Basque'
-    },
-    {
-      languageCode: 'bg',
-      languageName: 'Bulgarian'
-    },
-    {
-      languageCode: 'ca',
-      languageName: 'Catalan'
-    },
-    {
-      languageCode: 'zh-CN',
-      languageName: 'Chinese'
-    },
-    {
-      languageCode: 'hr',
-      languageName: 'Croatian'
-    },
-    {
-      languageCode: 'cs',
-      languageName: 'Czech'
-    },
-    {
-      languageCode: 'da',
-      languageName: 'Danish'
-    },
-    {
-      languageCode: 'nl',
-      languageName: 'Dutch'
-    },
-    {
       languageCode: 'en',
       languageName: 'English'
-    },
-    {
-      languageCode: 'es',
-      languageName: 'Español'
-    },
-    {
-      languageCode: 'et',
-      languageName: 'Estonian'
-    },
-    {
-      languageCode: 'fi',
-      languageName: 'Finish'
     },
     {
       languageCode: 'fr',
       languageName: 'French'
     },
     {
-      languageCode: 'de',
-      languageName: 'German'
-    },
-    {
-      languageCode: 'iw',
-      languageName: 'Hebrew'
-    },
-    {
-      languageCode: 'hi',
-      languageName: 'Hindi'
-    },
-    {
-      languageCode: 'hu',
-      languageName: 'Hungarian'
-    },
-    {
-      languageCode: 'is',
-      languageName: 'Icelandic'
-    },
-    {
-      languageCode: 'id',
-      languageName: 'Indonesian'
-    },
-    {
-      languageCode: 'it',
-      languageName: 'Italian'
-    },
-    {
-      languageCode: 'ga',
-      languageName: 'Irish'
-    },
-    {
-      languageCode: 'ja',
-      languageName: 'Japanese'
-    },
-    {
-      languageCode: 'ko',
-      languageName: 'Korean'
-    },
-    {
-      languageCode: 'lv',
-      languageName: 'Latvian'
-    },
-    {
-      languageCode: 'lt',
-      languageName: 'Lithuanian'
-    },
-    {
-      languageCode: 'no',
-      languageName: 'Norwegian'
-    },
-    {
-      languageCode: 'fa',
-      languageName: 'Persian'
-    },
-    {
-      languageCode: 'pl',
-      languageName: 'Polish'
-    },
-    {
-      languageCode: 'pt',
-      languageName: 'Portuguese'
-    },
-    {
-      languageCode: 'ro',
-      languageName: 'Romanian'
-    },
-    {
-      languageCode: 'ru',
-      languageName: 'Russian'
-    },
-    {
-      languageCode: 'sr',
-      languageName: 'Serbian'
-    },
-    {
-      languageCode: 'sk',
-      languageName: 'Slovak'
-    },
-    {
-      languageCode: 'sl',
-      languageName: 'Slovenian'
-    },
-    {
-      languageCode: 'sv',
-      languageName: 'Swedish'
-    },
-    {
-      languageCode: 'th',
-      languageName: 'Thai'
-    },
-    {
-      languageCode: 'tr',
-      languageName: 'Turkish'
-    },
-    {
-      languageCode: 'uk',
-      languageName: 'Ukrainian'
-    },
-    {
-      languageCode: 'cy',
-      languageName: 'Welsh'
-    },
-    {
       languageCode: 'zu',
       languageName: 'Zulu'
+    },
+    {
+      languageCode: 'af',
+      languageName: 'afrikaans'
+    },
+    {
+      languageCode: 'ha',
+      languageName: 'hausa'
+    },
+    {
+      languageCode: 'ig',
+      languageName: 'igbo'
+    },
+    {
+      languageCode: 'sn',
+      languageName: 'shona'
+    },
+    {
+      languageCode: 'su',
+      languageName: 'sundanese'
+    },
+    {
+      languageCode: 'sw',
+      languageName: 'swahili'
+    },
+    {
+      languageCode: 'so',
+      languageName: 'somali'
     }
-
   ];
 
+  preferences = {};
+  PREF_TRANSLATION_LANGUAGE;
+  PREF_ENABLE_TRANSLATION;
   constructor(
-    private transService: TanslationService,
-    public events: Events
+    public events: Events,
+    private  preferencesService: PreferenceService
     ) { 
-   
+      this.PREF_TRANSLATION_LANGUAGE = PreferenceService.PREF_TRANSLATION_LANGUAGE;
+      this.PREF_ENABLE_TRANSLATION = PreferenceService.PREF_ENABLE_TRANSLATION;
   }
 
   ngOnInit() {
@@ -198,6 +78,22 @@ export class GroupsPage implements OnInit {
     value: any 
   }) {
     this.events.publish("languageChanged", event.value)
+  }
+
+  ionViewWillEnter(){
+    this.preferences[PreferenceService.PREF_TRANSLATION_LANGUAGE]
+      = this.preferencesService.getPreference(PreferenceService.PREF_TRANSLATION_LANGUAGE);
+    this.preferences[PreferenceService.PREF_ENABLE_TRANSLATION]
+      = this.preferencesService.getPreference(PreferenceService.PREF_ENABLE_TRANSLATION);
+  }
+
+  changeRadioPreference(event, key){
+    this.preferencesService.setPreference(key, event.detail.checked);
+  }
+
+  changeSelectPreference(event, key){
+    // console.log(event.detail.checked);
+    this.preferencesService.setPreference(key, event.detail.value);
   }
 
 }

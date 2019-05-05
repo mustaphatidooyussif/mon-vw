@@ -6,6 +6,8 @@ import { HttpModule } from '@angular/http'
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { IonicSelectableModule } from 'ionic-selectable';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -21,15 +23,13 @@ import { AngularFirestore } from '@angular/fire/firestore'
 import { UserService } from './services/user.service'
 import { AuthService } from './services/auth.service'
 import { TanslationService } from './services/tanslation.service'
+import { PreferenceService } from './services/preference.service'
 import { ImagehandlerService } from './services/imagehandler.service'
-import { IonicSelectableModule } from 'ionic-selectable';
-import { IonicStorageModule } from '@ionic/storage';
-
 
 // File upload
-// import { File } from '@ionic-native/file';
-// import { FileChooser } from '@ionic-native/file-chooser';
-// import { FilePath } from '@ionic-native/file-path';
+import { File } from '@ionic-native/file/ngx';
+import { FileChooser} from '@ionic-native/file-chooser/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,7 +40,7 @@ import { IonicStorageModule } from '@ionic/storage';
     AngularFireAuthModule,
     IonicSelectableModule,
     HttpModule,
-    // IonicStorageModule,
+    IonicStorageModule.forRoot(),
     AngularFireModule.initializeApp(config)],
   providers: [
     StatusBar,
@@ -49,9 +49,13 @@ import { IonicStorageModule } from '@ionic/storage';
     AngularFireAuth,
     UserService,
     AngularFirestore,
-    ImagehandlerService,
     TanslationService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    PreferenceService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    File,
+    FileChooser,
+    FilePath,
+    ImagehandlerService
   ],
   bootstrap: [AppComponent]
 })

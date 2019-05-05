@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
+import { FilePath } from '@ionic-native/file-path';
 
 import { IonicModule } from '@ionic/angular';
 
