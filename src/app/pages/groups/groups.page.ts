@@ -73,12 +73,12 @@ export class GroupsPage implements OnInit {
   ngOnInit() {
   }
 
-  languageChange(event: {
-    component: IonicSelectableComponent,
-    value: any 
-  }) {
-    this.events.publish("languageChanged", event.value)
-  }
+  // languageChange(event: {
+  //   component: IonicSelectableComponent,
+  //   value: any 
+  // }) {
+  //   this.events.publish("languageChanged", event.value)
+  // }
 
   ionViewWillEnter(){
     this.preferences[PreferenceService.PREF_TRANSLATION_LANGUAGE]

@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import { File } from '@ionic-native/file';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path';
+import { Platform} from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,17 @@ import { FilePath } from '@ionic-native/file-path';
 export class ImagehandlerService {
   nativepath: any;
   firestore = firebase.storage();
-  constructor(public filechooser: FileChooser) { }
+
+  constructor(
+    public filechooser: FileChooser, 
+    public platform: Platform) { }
 
   
   uploadimage() {
     var promise = new Promise((resolve, reject) => {
+      if(this.platform.is('cordova')){
         this.filechooser.open().then((url) => {
+          alert(url);
           (<any>window).FilePath.resolveNativePath(url, (result) => {
             this.nativepath = result;
             (<any>window).resolveLocalFileSystemURL(this.nativepath, (res) => {
@@ -39,6 +45,10 @@ export class ImagehandlerService {
             })
           })
       })
+      }else{
+        console.log("Using native plugins.");
+      }
+      
     })    
      return promise;   
   }

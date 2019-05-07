@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service'
 import {Http}  from     '@angular/http';
 import { PreferenceService } from './../../services/preference.service';
 import { Storage } from '@ionic/storage';
+import { TanslationService } from './../../services/tanslation.service';
 
 @Component({
   selector: 'app-buddychat',
@@ -34,7 +35,8 @@ export class BuddychatPage implements OnInit {
     public zone: NgZone,
     private http: Http,
     private  preferencesService: PreferenceService,
-    public storage: Storage
+    public storage: Storage,
+    public translator: TanslationService
 
   ) { 
     // if buddy not set, retrieve from database
@@ -83,28 +85,27 @@ export class BuddychatPage implements OnInit {
   ngOnInit() {
   }
 
-  translateAndSend(message, sourceLangeCode, targetLangCode){
-    this.http.get("https://translate.googleapis.com/translate_a/single?client=gtx&sl=" 
-    + sourceLangeCode + "&tl=" + targetLangCode + "&dt=t&q=" + encodeURI(message)).subscribe(data =>{
-      var translatedText = data.json()[0][0][0]
-      this.chatservice.addnewmessage(message, translatedText).then(() => {
-       this.scrollChatToBottom()
-       this.newmessage = '';
-     })
-    })
-
-  }
-
+  /**
+   * 1. Get the target language code
+   * 2. then translate the message to the target langugae
+   * 3. add message to firebase (database).
+   * 4. scroll chat down
+   * 5. reset new message to empty string. 
+   */
   addmessage() {
     if(this.newmessage != ''){
-      console.log(this.targetLanguageCode);
       this.preferencesService.getTranslationLanguage().then(code =>{
-        console.log(code)
-        this.translateAndSend(this.newmessage, "en", code);
+        this.translator.translate(code, this.newmessage, "en").then(text =>{
+          this.chatservice.addnewmessage(this.newmessage,text).then(()=>{
+            this.scrollChatToBottom();
+            this.newmessage = '';
+          });
+        });
       })
     }
   }
 
+  // Scroll the chat down 
   scrollChatToBottom(){
     this.content.scrollToBottom(); //this.content.scrollToBottom(200);
   }

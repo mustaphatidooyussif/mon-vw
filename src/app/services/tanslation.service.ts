@@ -9,13 +9,16 @@ export class TanslationService {
 
   constructor(private http: Http) { }
 
-  translate(sourceText, sourceLangCode, targetLangCode){
-    var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" 
-    + sourceLangCode + "&tl=" + targetLangCode + "&dt=t&q=" + encodeURI(sourceText);
-    this.http.get(url).subscribe(data =>{
-      this.data = data.json()[0][0][0];
-      console.log("this.data", data)
-      return this.data;
-    })
-  }
+  translate(translateTo, text, translateFrom = 'auto') {
+    return new Promise((resolve, reject) => {
+        const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl="
+            + translateFrom + "&tl=" + translateTo + "&dt=t&q=" + encodeURI(text);
+
+        fetch(url).then(response => {
+            response.json().then(data => {
+                resolve(data[0][0][0])
+            }, reject)
+        }, reject)
+    });
+}
 }
